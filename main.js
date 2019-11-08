@@ -29,14 +29,55 @@ const computeSpiralCoords = (R, C, r0 = 0, c0 = 0) => {
     if (err) {
         throw new Error(err);
     } else {
-        const DIRECTION = {
-            UP: 'up',
-            DOWN: 'down',
-            LEFT: 'left',
-            RIGHT: 'right'
+        const DIRECTIONS = {
+            UP: {
+                value: 'up',
+                fn: () => {
+                    if (rowIndex === topBorder) {
+                        topBorder--;
+                        direction = DIRECTIONS.RIGHT.value;
+                        colIndex++;
+                    } else {
+                        rowIndex--;
+                    }
+                }
+            },
+            DOWN: {
+                value: 'down',
+                fn: () => {
+                    if (rowIndex === bottomBorder) {
+                        bottomBorder++;
+                        direction = DIRECTIONS.LEFT.value;
+                    } else {
+                        rowIndex++;
+                    }
+                }
+            },
+            LEFT: {
+                value: 'left',
+                fn: () => {
+                    if (colIndex === leftBorder) {
+                        leftBorder--;
+                        direction = DIRECTIONS.UP.value;
+                    } else {
+                        colIndex--;
+                    }
+                }
+            },
+            RIGHT: {
+                value: 'right',
+                fn: () => {
+                    if (colIndex === rightBorder) {
+                        rightBorder++;
+                        direction = DIRECTIONS.DOWN.value;
+                    } else {
+                        colIndex++;
+                    }
+                }
+            }
         };
 
-        let direction = DIRECTION.RIGHT;
+        let direction = DIRECTIONS.RIGHT.value;
         let coords = [];
         let rowIndex = r0;
         let colIndex = c0;
@@ -47,47 +88,20 @@ const computeSpiralCoords = (R, C, r0 = 0, c0 = 0) => {
 
         while (coords.length < R * C) {
 
-            if (isInsideGrid(R, C, rowIndex, colIndex)) {
-                coords.push([rowIndex, colIndex]);
-            }
+            if (isInsideGrid(R, C, rowIndex, colIndex)) coords.push([rowIndex, colIndex]);
 
-            if (direction === DIRECTION.RIGHT) {
-                if (colIndex === rightBorder) {
-                    rightBorder++;
-                    direction = DIRECTION.DOWN;
-                } else {
-                    colIndex++;
-                }
-            }
-            if (direction === DIRECTION.DOWN) {
-                if (rowIndex === bottomBorder) {
-                    bottomBorder++;
-                    direction = DIRECTION.LEFT;
-                } else {
-                    rowIndex++;
-                }
-            }
-            if (direction === DIRECTION.LEFT) {
-                if (colIndex === leftBorder) {
-                    leftBorder--;
-                    direction = DIRECTION.UP;
-                } else {
-                    colIndex--;
-                }
-            }
-            if (direction === DIRECTION.UP) {
-                if (rowIndex === topBorder) {
-                    topBorder--;
-                    direction = DIRECTION.RIGHT;
-                    colIndex++;
-                } else {
-                    rowIndex--;
-                }
-            }
+            if (direction === DIRECTIONS.RIGHT.value) DIRECTIONS.RIGHT.fn();
+
+            if (direction === DIRECTIONS.DOWN.value) DIRECTIONS.DOWN.fn();
+
+            if (direction === DIRECTIONS.LEFT.value) DIRECTIONS.LEFT.fn();
+
+            if (direction === DIRECTIONS.UP.value) DIRECTIONS.UP.fn();
+
         }
         return coords;
     }
 };
 
 console.log(computeSpiralCoords(1, 4, 0, 0));
-// console.log(computeSpiralCoords(5, 6, 1, 4));
+console.log(computeSpiralCoords(5, 6, 1, 4));
